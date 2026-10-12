@@ -1,28 +1,5 @@
-import subprocess
-import sys
-
-
-def install(package):
-  subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
-
-
-try:
-  import pandas as pd
-except ImportError:
-  install('pandas')
-  import pandas as pd
-
-try:
-  import matplotlib.pyplot as plt
-except ImportError:
-  install('matplotlib')
-  import matplotlib.pyplot as plt
-
-try:
-  import streamlit as st
-except ImportError:
-  install('streamlit')
-  import streamlit as st
+import pandas as pd
+import streamlit as st
 
 # --- 1. DỮ LIỆU VÀ TÍNH TOÁN ---
 data = {
@@ -62,7 +39,7 @@ def xep_loai(dtk):
 
 df['Xep_loai'] = df['Tong_ket'].apply(xep_loai)
 
-# --- 2. GIAO DIỆN STREAMLIT ---
+# --- 2. GIAO DIỆN WEB APP ---
 st.title('QUẢN LÝ ĐIỂM SINH VIÊN')
 st.subheader('Bảng điểm chi tiết')
 st.dataframe(df, use_container_width=True)
@@ -103,10 +80,9 @@ st.markdown(f"""
 """)
 
 st.subheader('Biểu đồ điểm tổng kết lớp')
-fig, ax = plt.subplots(figsize=(10, 5))
-ax.bar(df['Ho_va_ten'], df['Tong_ket'], color='skyblue', edgecolor='black')
-ax.set_title('Biểu đồ điểm tổng kết', fontsize=12)
-ax.set_xlabel('Sinh viên')
+# Sử dụng biểu đồ tích hợp sẵn của Streamlit, chạy cực nhanh và không cần matplotlib
+chart_data = df.set_index('Ho_va_ten')[['Tong_ket']]
+st.bar_chart(chart_data)
 ax.set_ylabel('Điểm tổng kết')
 plt.xticks(rotation=45, ha='right')
 ax.set_ylim(0, 10)
