@@ -46,8 +46,11 @@ st.dataframe(df, use_container_width=True)
 
 st.subheader('Thống kê kết quả học tập')
 diem_tb_lop = df['Tong_ket'].mean()
-max_sv = df.loc[df['Tong_ket'].idxmax()]
-min_sv = df.loc[df['Tong_ket'].idmin()]
+
+# Sắp xếp an toàn để tìm max/min không bị lỗi phiên bản Pandas
+df_sorted = df.sort_values(by='Tong_ket', ascending=False)
+max_sv = df_sorted.iloc[0]
+min_sv = df_sorted.iloc[-1]
 so_sv_dat = (df['Tong_ket'] >= 5.0).sum()
 
 col1, col2 = st.columns(2)
@@ -80,11 +83,5 @@ st.markdown(f"""
 """)
 
 st.subheader('Biểu đồ điểm tổng kết lớp')
-# Sử dụng biểu đồ tích hợp sẵn của Streamlit, chạy cực nhanh và không cần matplotlib
 chart_data = df.set_index('Ho_va_ten')[['Tong_ket']]
 st.bar_chart(chart_data)
-ax.set_ylabel('Điểm tổng kết')
-plt.xticks(rotation=45, ha='right')
-ax.set_ylim(0, 10)
-ax.grid(axis='y', linestyle='--', alpha=0.7)
-st.pyplot(fig)
